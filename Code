@@ -1,0 +1,50 @@
+#= 
+COVID-19 Data Tracker in Julia
+By: Dennis (with help from ChatGPT 😉)
+=#
+
+using CSV
+using DataFrames
+using Plots
+using HTTP
+using Dates
+
+# Create directories if not exist
+isdir("data") || mkdir("data")
+isdir("plots") || mkdir("plots")
+
+# Step 1: Download and Load Data
+println("🔄 Downloading latest COVID-19 dataset...")
+url = "https://covid.ourworldindata.org/data/owid-covid-data.csv"
+download(url, "data/covid_data.csv")
+df = CSV.read("data/covid_data.csv", DataFrame)
+println("✅ Data loaded with $(nrow(df)) rows.")
+
+# Step 2: Filter Data by Country
+function get_country_data(df::DataFrame, country::String)
+    country_data = filter(:location => ==(country), df)
+    sort!(country_data, :date)
+    return country_data
+end
+
+# Step 3: Plot Function
+function plot_metric(country_data::DataFrame, column::Symbol, ylabel::String)
+    plot(
+        country_data.date, country_data[!, column],
+        title="$(ylabel) in $(country_data.location[1])",
+        xlabel="Date", ylabel=ylabel,
+        legend=false, lw=2, c=:blue
+    )
+end
+
+# Step 4: Run Tracker for Specific Country & Metric
+selected_country = "Kenya"
+metric = :new_cases
+metric_label = "Daily New COVID-19 Cases"
+
+country_df = get_country_data(df, selected_country)
+plot_metric(country_df, metric, metric_label)
+
+# Step 5: Save Plot
+savefig("plots/$(selected_country)_$(metric).png")
+println("📊 Plot saved to 'plots/$(selected_country)_$(metric).png'")
