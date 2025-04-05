@@ -1,0 +1,7 @@
+covid_tracker/
+│
+├── covid_tracker.jl          # Main script
+├── data/
+│   └── covid_data.csv        # (Optional) Local copy of dataset
+└── plots/
+    └── country_plot.png      # Output plots (optional)
