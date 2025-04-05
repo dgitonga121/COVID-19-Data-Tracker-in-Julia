@@ -1,0 +1,5 @@
+using CSV           # For reading data
+using DataFrames    # For data manipulation
+using Plots         # For creating visualizations
+using HTTP          # For downloading data (optional)
+using Dates         # For working with date fields
